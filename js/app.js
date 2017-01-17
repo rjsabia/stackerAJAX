@@ -5,8 +5,6 @@ var showQuestion = function(question) {
 	// clone our result template code
 	var result = $('.templates .question').clone();
 
-	console.log(result);
-	
 	// Set the question properties in result
 	var questionElem = result.find('.question-text a');
 	questionElem.attr('href', question.link);
@@ -33,13 +31,11 @@ var showQuestion = function(question) {
 	return result;
 };
 
-// This is where top questions output
+// This is where top answers output
 var showAnswers = function(answer) {
 	
 	// clone our result template code
 	var result = $('.templates .question').clone();
-
-	console.log(result);
 	
 	// Set the question properties in result
 	var answerElem = result.find('.question-text a');
@@ -49,7 +45,7 @@ var showAnswers = function(answer) {
 
 	// set the date asked property in result
 	var rep = result.find('.asked-date');
-	$('.ask').replaceWith("<dt>Reputation Score</dt>");
+	$('.ask').replaceWith("<dt>Reputation Points</dt>");
 	rep.html(answer.user.reputation);
 
 	// set the .viewed for question property in result for unanswered
@@ -99,7 +95,10 @@ var getUnanswered = function(tags) {
 		type: "GET"
 	})
 	.done(function(result){ //this waits for the ajax to return with a succesful promise object
+		
 		var searchResults = showSearchResults(request.tagged, result.items.length);
+
+		console.log(result);
 
 		$('.search-results').html(searchResults);
 		//$.each is a higher order function. It takes an array and a function as an argument.
@@ -115,8 +114,8 @@ var getUnanswered = function(tags) {
 	});
 };
 
+// This function searches for the top rated answers for the subject entered in search bar 
 var getTopAnswer = function(topAnswer) {
-
 	// the parameters we need to pass in our request to StackOverflow's API
 	var request = { 
 		tag: topAnswer,
@@ -131,10 +130,10 @@ var getTopAnswer = function(topAnswer) {
 		type: "GET"
 	})
 	.done(function(result){ //this waits for the ajax to return with a succesful promise object
+		
+		var searchResults = showSearchResults(request.tag, result.items.length);
 
 		console.log(result);
-		
-		var searchResults = showSearchResults(request.tag, result.items);
 
 		$('.search-results').html(searchResults);
 		//$.each is a higher order function. It takes an array and a function as an argument.
@@ -155,6 +154,7 @@ var getTopAnswer = function(topAnswer) {
 };
 
 $(document).ready( function() {
+	// This grabs the submit for un-answered questions
 	$('.unanswered-getter').submit( function(e){
 		e.preventDefault();
 		// zero out results if previous search has run
@@ -163,9 +163,11 @@ $(document).ready( function() {
 		var tags = $(this).find("input[name='tags']").val();
 
 		getUnanswered(tags);
+		// clears out input bar after search is run
+		$('.unanswer-bar').val('');
 	});
 
-	// this is where to start the .submit .... for top answers
+	// this grabs the submit for inspiration getter, i.e. top answers
 	$('.inspiration-getter').submit( function(e){
 		
 		e.preventDefault();
@@ -175,6 +177,10 @@ $(document).ready( function() {
 		var topAnswer = $(this).find("input[name='answerers']").val();
 		
 		getTopAnswer(topAnswer);
+		// clears out input bar after search is run
+		$('.top-answer-bar').val('');
 	});
 	
 });
+// **********END OF PROGRAM*********************************************
+// *********************************************************************
